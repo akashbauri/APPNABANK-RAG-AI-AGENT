@@ -11,10 +11,16 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Cross-Origin Resource Sharing setup for Flutter Mobile / Web Access layers
+# --- SECURITY FIX: Restricting CORS Origins ---
+# We use settings.ALLOWED_ORIGINS (defined in your config) to avoid unsafe wildcard ["*"] mapping
+# while allow_credentials is True.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=getattr(settings, "ALLOWED_ORIGINS", [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://your-frontend-domain.com"
+    ]),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
